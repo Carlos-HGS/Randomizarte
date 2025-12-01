@@ -1,5 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'random_service.dart';
+import 'dart:math';
 
 void main() {
   runApp(const RandomizarteApp());
@@ -16,178 +17,6 @@ class _RandomizarteAppState extends State<RandomizarteApp> {
   bool temaEscuro = false;
   String palavraAtual = '';
   Color corAleatoria = Colors.transparent;
-
-  final Map<String, List<String>> bancos = {
-    'Ação': [
-      'Ajudar',
-      'Aumentar',
-      'Benzer',
-      'Bisbilhotar',
-      'Cair',
-      'Conquistar',
-      'Cuidar',
-      'Doar',
-      'Descobrir',
-      'Desenterrar',
-      'Flutuar',
-      'Guiar',
-      'Honrar',
-      'Julgar',
-      'Libertar',
-      'Machucar',
-      'Mergulhar',
-      'Navegar',
-      'Negociar',
-      'Operar',
-      'Pescar',
-      'Procrastinar',
-      'Reinar',
-      'Salvar',
-      'Sobreviver',
-      'Transformar',
-      'Unir',
-      'Vigiar',
-      'Zarpar',
-    ],
-    'Conceito': [
-      'Afrofuturismo',
-      'Ambição',
-      'Arcano',
-      'Autonomia',
-      'Culpa',
-      'Cyberpunk',
-      'Democracia',
-      'Desejo',
-      'Destino',
-      'Distopia',
-      'Empatia',
-      'Esperança',
-      'Fragilidade',
-      'Futuro',
-      'Gótico',
-      'Heroísmo',
-      'Humildade',
-      'Ignorância',
-      'Inocência',
-      'Liberdade',
-      'Luxúria',
-      'Memória',
-      'Mistério',
-      'Nostalgia',
-      'Obsessão',
-      'Ordem',
-      'Paixão',
-      'Poder',
-      'Preguiça',
-      'Rebeldia',
-      'Sacrifício',
-      'Serenidade',
-      'Tradição',
-      'Tristeza',
-      'Utopia',
-      'Virtude',
-    ],
-    'Criatura': [
-      'Agricultor',
-      'Anubis',
-      'Baleia',
-      'Behemoth',
-      'Boto',
-      'Capivara',
-      'Curupira',
-      'Djinn',
-      'Fenrir',
-      'Gnomo',
-      'Grifo',
-      'Hidra',
-      'Justiceiro',
-      'Kitsune',
-      'Lich',
-      'Mapinguari',
-      'Monstro do Lago Ness',
-      'Pinguim',
-      'Quimera',
-      'Rakshasa',
-      'Sátiro',
-      'Valkíria',
-      'Wendigo',
-      'Yeti',
-    ],
-    'Lugar': [
-      'Abismo',
-      'Arena',
-      'Arquipélago',
-      'Castelo',
-      'Cemitério',
-      'Deserto',
-      'Estufa',
-      'Farol',
-      'Forte',
-      'Galáxia',
-      'Labirinto',
-      'Montanha',
-      'Nave',
-      'Oásis',
-      'Paraíso',
-      'Penhasco',
-      'Prisão',
-      'Reino',
-      'Ruínas',
-      'Santuário',
-      'Savana',
-      'Templo',
-      'Tundra',
-      'Vale',
-      'Vilarejo',
-      'Vulcão',
-    ],
-    'Objeto': [
-      'Alçapão',
-      'Armadura',
-      'Bússola',
-      'Cápsula de tempo',
-      'Disco',
-      'Elixir',
-      'Escudo',
-      'Frasco',
-      'Foguete',
-      'Gaiola',
-      'Gancho',
-      'Gramofone',
-      'Incenso',
-      'Joia',
-      'Lampião',
-      'Mapa',
-      'Medalha',
-      'Necronomicon',
-      'Ornamento',
-      'Osso',
-      'Pêndulo',
-      'Peruca',
-      'Relógio de sol',
-      'Roupão',
-      'Selo',
-      'Sino',
-      'Talismã',
-      'Torre',
-      'Uniforme',
-      'Urna',
-    ],
-  };
-
-  void gerarPalavra(String categoria) {
-    final random = Random();
-    final lista = bancos[categoria]!;
-    final palavra = lista[random.nextInt(lista.length)];
-    final cor = Color(
-      (Random().nextDouble() * 0xFFFFFF).toInt(),
-    ).withValues(alpha: 1.0);
-
-    setState(() {
-      palavraAtual = palavra;
-      corAleatoria = cor;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -320,6 +149,28 @@ class _RandomizarteAppState extends State<RandomizarteApp> {
   }
 
   Widget botaoCategoria(String nome, Color cor) {
+    String table;
+
+    switch (nome) {
+      case 'Ação':
+        table = 'acao';
+        break;
+      case 'Conceito':
+        table = 'conceito';
+        break;
+      case 'Criatura':
+        table = 'criatura';
+        break;
+      case 'Lugar':
+        table = 'lugar';
+        break;
+      case 'Objeto':
+        table = 'objeto';
+        break;
+      default:
+        table = '';
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: SizedBox(
@@ -331,7 +182,16 @@ class _RandomizarteAppState extends State<RandomizarteApp> {
             textStyle: const TextStyle(fontWeight: FontWeight.bold),
             minimumSize: const Size(0, 48),
           ),
-          onPressed: () => gerarPalavra(nome),
+          onPressed: () async {
+            final palavra = await getRandom(table);
+
+            setState(() {
+              palavraAtual = palavra;
+              corAleatoria = Color(
+                (Random().nextDouble() * 0xFFFFFF).toInt(),
+              ).withValues(alpha: 1.0);
+            });
+          },
           child: Text(nome),
         ),
       ),
