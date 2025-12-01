@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'local_data.dart';
 import 'package:flutter/foundation.dart';
 
 // APP (SQLite)
@@ -42,20 +43,22 @@ class DatabaseService {
     return result.first['nome'] as String;
   }
 
-  // ✅ FLUTTER WEB
   static Future<String> _getWebRandom(String table) async {
-    final db = await _getWebDB();
-    final store = _store(table);
+  final db = await _getWebDB();
+  final store = _store(table);
 
-    final records = await store.find(db);
+  final count = await store.count(db);
 
-    // Se vazio → importar do SQL
-    if (records.isEmpty) {
-  return 'Banco vazio no navegador';
-}
-    final rand = Random().nextInt(records.length);
-    return records[rand].value['nome'] as String;
+  if (count == 0) {
+    final lista = webData[table] ?? [];
+    for (var item in lista) {
+      await store.add(db, {'nome': item});
+    }
   }
 
+  final records = await store.find(db);
+  final rand = Random().nextInt(records.length);
+  return records[rand].value['nome'] as String;
+}
   
 }
