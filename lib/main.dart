@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'random_service.dart';
+import 'database_service.dart';
 import 'dart:math';
 
 void main() {
@@ -183,8 +183,7 @@ class _RandomizarteAppState extends State<RandomizarteApp> {
             minimumSize: const Size(0, 48),
           ),
           onPressed: () async {
-            final palavra = await getRandom(table);
-
+            final palavra = await DatabaseService.getRandom(table);
             setState(() {
               palavraAtual = palavra;
               corAleatoria = Color(
